@@ -1,25 +1,48 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { ref } from 'vue'
 import VIcon from './VIcon.vue'
 import { IconNamesEnum } from '../assets/IconNames.enum.ts' // Assuming you have an icon component
 
+// Интерфейсы для пропсов
 interface ButtonProps {
   icon?: IconNamesEnum
-  text?: string
+  text: string
   buttonStyle: 'normal' | 'round'
+  textStyle: 'icon+text' | 'round'
+  iconStyle: 'normal' | 'round'
+  disabled?: boolean
 }
 
+// Определяем пропсы
 const props = defineProps<ButtonProps>()
 
-const emit = defineEmits(['click'])
+// Состояния для ховера и нажатия
+const isHovered = ref(false)
+const isPressed = ref(false)
 
-const isHover = ref<boolean>(false)
-const isPressed = ref<boolean>(false)
-const isDisabled = ref<boolean>(false)
+// Обработчики событий для ховера и нажатия
+const handleMouseOver = () => {
+  if (!props.disabled) {
+    isHovered.value = true
+  }
+}
 
-function handleClick(event: MouseEvent) {
-  if (!isDisabled.value) {
-    emit('click', event)
+const handleMouseLeave = () => {
+  if (!props.disabled) {
+    isHovered.value = false
+    isPressed.value = false
+  }
+}
+
+const handleMouseDown = () => {
+  if (!props.disabled) {
+    isPressed.value = true
+  }
+}
+
+const handleMouseUp = () => {
+  if (!props.disabled) {
+    isPressed.value = false
   }
 }
 </script>
@@ -27,73 +50,70 @@ function handleClick(event: MouseEvent) {
 <template>
   <button
     :class="[
-      'btn',
-      buttonStyle,
-      { 'btn-hover': isHover },
-      { 'btn-pressed': isPressed },
-      { 'btn-disabled': isDisabled }
+      'button',
+      `button--${buttonStyle}`,
+      `button--${textStyle}`,
+      `button--${iconStyle}`,
+      {
+        'button--hover': isHovered,
+        'button--pressed': isPressed,
+        'button--disabled': disabled
+      }
     ]"
-    @click="handleClick"
-    @mouseenter="isHover = true"
-    @mouseleave="isHover = false"
-    @mousedown="isPressed = true"
-    @mouseup="isPressed = false"
-    :disabled="isDisabled"
+    :disabled="disabled"
+    @mouseover="handleMouseOver"
+    @mouseleave="handleMouseLeave"
+    @mousedown="handleMouseDown"
+    @mouseup="handleMouseUp"
   >
-    <span class="btn-text" :class="textStyle">{{ icon }}</span>
-    <v-icon :name="icon" />
+    <template v-if="icon && textStyle === 'icon+text'">
+      <VIcon :name="icon" class="button__icon" />
+      <span>{{ text }}</span>
+    </template>
+    <template v-else-if="icon">
+      <VIcon :name="icon" class="button__icon" />
+    </template>
+    <template v-else>
+      <span>{{ text }}</span>
+    </template>
   </button>
 </template>
 
 <style scoped>
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 0.25rem;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition:
-    background-color 0.2s,
-    color 0.2s;
-}
-
-.btn-content {
+.button {
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+  transition:
+    background-color 0.3s,
+    box-shadow 0.3s;
 }
 
-.btn-icon {
-  margin-right: 0.5rem;
+.button--normal {
+  border-radius: 5px;
 }
 
-.btn-text {
-  line-height: 1;
+.button--round {
+  border-radius: 50%;
 }
 
-.btn-normal {
-  background-color: #4caf50;
-  color: white;
+.button--icon + text .button__icon {
+  margin-right: 8px;
 }
 
-.btn-round {
-  border-radius: 9999px;
+.button--hover {
+  background-color: #9fcf60; /* Обновите цвет для состояния hover */
 }
 
-.btn-hover {
-  background-color: #45a049;
+.button--pressed {
+  background-color: #6bb33b; /* Обновите цвет для состояния pressed */
 }
 
-.btn-pressed {
-  background-color: #3e8e41;
-}
-
-.btn-disabled {
-  opacity: 0.6;
+.button--disabled {
+  background-color: #b0b0b0; /* Обновите цвет для состояния disabled */
   cursor: not-allowed;
 }
 </style>

@@ -5,21 +5,14 @@ export const router = createRouter({
 
   routes: [
     {
-      path: '/:auth?',
+      path: '/',
       name: 'mainPage',
       component: () => import('./views/MainPage.vue')
-      // children: [
-      //   {
-      //     path: 'logIn',
-      //     name: 'logInPage',
-      //     component: () => import('./App.vue')
-      //   },
-      //   {
-      //     path: 'signIn',
-      //     name: 'signInPage',
-      //     component: () => import('./App.vue')
-      //   }
-      // ]
+    },
+    {
+      path: '/user',
+      name: 'userPage',
+      component: () => import('./views/UserPage.vue')
     }
 
     // {

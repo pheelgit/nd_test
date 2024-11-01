@@ -1,12 +1,15 @@
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
+import { useAuthUser } from '../hooks/useAuthUser.ts'
+const props = defineProps<{ onSubmit?: Function }>()
+const { authUser } = useAuthUser()
 
 const email = ref('')
 const password = ref('')
 
-const login = () => {
-  // Логика авторизации здесь
-  console.log('Logging in', { email: email.value, password: password.value })
+const login = async () => {
+  await authUser(email.value, password.value)
+  props.onSubmit && props.onSubmit()
 }
 </script>
 

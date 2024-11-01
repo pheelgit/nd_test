@@ -1,25 +1,27 @@
-import axios from 'axios'
-import { BASE_URL } from '../constants.ts'
+import axios, { AxiosInstance, AxiosResponse } from 'axios'
+// import { BASE_URL } from './constants.ts'
 import { router } from '../router.ts'
+import { BASE_URL } from '../constants.ts'
+import { NewNoteType, NoteIdType, NoteType } from '../types/noteType.ts'
 
 class HTTPService {
   private static instance: HTTPService
+  private axiosInstance: AxiosInstance
 
   constructor() {
     const axiosInstance = axios.create({
-      baseURL: BASE_URL
-      // headers: {
-      //   'Content-Type': 'application/json',
-      //   'Access-Control-Allow-Origin': '*'
-      // }
+      baseURL: BASE_URL,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      }
     })
 
     // Add a request interceptor
     axiosInstance.interceptors.request.use(
       async function (config) {
-        // Do something before request is sent
-        // const accessToken = await getAccessToken()
-        // config.headers.Authorization = `Bearer ${accessToken}`
+        const accessToken = localStorage.getItem('token')
+        config.headers.Authorization = `Bearer ${accessToken}`
         return config
       },
       function (error) {
@@ -39,12 +41,11 @@ class HTTPService {
       async function (error) {
         // const { title, detail } = error.response.data
         const status = error.response.status
-        // // Any status codes that falls outside the range of 2xx cause this function to trigger
-        // // Do something with response error
         switch (status) {
           case 401: {
             //      removeUser
-            await router.push({ name: 'authPage' })
+            localStorage.setItem('token', '')
+            await router.push({ name: 'mainPage' })
             break
           }
           //   case 404: {
@@ -56,6 +57,8 @@ class HTTPService {
         return Promise.reject(error)
       }
     )
+
+    this.axiosInstance = axiosInstance
   }
 
   public static getInstance(): HTTPService {
@@ -65,39 +68,39 @@ class HTTPService {
     return HTTPService.instance
   }
 
-  public async getUserNotes() {}
-  // public async getNotes(): Promise<void> {
-  //   const wellData = this.getWellData(wellId)
-  //   // если уже обновляется, то выходим
-  //   if (!wellData.canUpdateData) {
-  //     return
-  //   }
-  //
-  //   wellData.canUpdateData = false
-  //
-  //   // докачка новых строк
-  //   if (wellData.shrtIDOfUpdate !== endShrtIDOfUpdate) {
-  //     await this.addNewRows(wellId, endShrtIDOfUpdate)
-  //   }
-  //
-  //   // пересчет индексов если новые данные или новые дриллстейты
-  //   // const getMaxDrillStateShrtIdofUpdate = (wellId: WellIdType): number => {
-  //   const getMaxDrillStateShrtIdofUpdate = (): number => {
-  //     return d3.max(drillStates, (el) => el.ShrtIDOfUpdate) || 0
-  //   } // отдельный стор дриллстейтов
-  //
-  //   if (
-  //     wellData.shrtIDOfUpdate !== endShrtIDOfUpdate ||
-  //     wellData.lastDrillStatesShrtIdOfUpdate !== getMaxDrillStateShrtIdofUpdate()
-  //   ) {
-  //     await this.rebuildIndex(wellId, drillStates)
-  //     wellData.lastDrillStatesShrtIdOfUpdate = getMaxDrillStateShrtIdofUpdate()
-  //   }
-  //
-  //   await this.addNewCols(wellId, valueList)
-  //
-  //   wellData.canUpdateData = true
-  // }
+  public async logIn(data: {
+    email: string
+    password: string
+  }): Promise<AxiosResponse<{ accessToken: string }>> {
+    return await this.axiosInstance.post('/api/auth', data)
+  }
+
+  public async signIn(data: {
+    email: string
+    password: string
+    confirm_password: string
+  }): Promise<AxiosResponse<{ id: number; email: string }>> {
+    return await this.axiosInstance.post('/api/reg', data)
+  }
+  public async getToken(data: {
+    email: string
+    password: string
+  }): Promise<AxiosResponse<{ accessToken: string }>> {
+    return await this.axiosInstance.post('/api/auth', data)
+  }
+  public async getUser(): Promise<AxiosResponse<{ id: number; email: string }>> {
+    return await this.axiosInstance.get('/api/auth')
+  }
+
+  public async getNotes(): Promise<AxiosResponse<NoteType[]>> {
+    return await this.axiosInstance.get('/api/notes')
+  }
+  public async addNote(note: NewNoteType): Promise<AxiosResponse<NoteType>> {
+    return await this.axiosInstance.post('/api/notes', note)
+  }
+  public async deleteNote(id: NoteIdType): Promise<AxiosResponse> {
+    return await this.axiosInstance.delete(`/api/notes/${id}`)
+  }
 }
 
 // Экспорт конкретного инстанса
