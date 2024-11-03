@@ -5,9 +5,7 @@ import AppHeader from './components/AppHeader.vue'
 
 <template>
   <AppHeader id="app-header" />
-  <div id="app-content">
-    <RouterView />
-  </div>
+  <RouterView id="app-content" />
 </template>
 
 <style>
@@ -17,5 +15,6 @@ import AppHeader from './components/AppHeader.vue'
 
 #app-content {
   flex-grow: 1;
+  padding: 1em;
 }
 </style>

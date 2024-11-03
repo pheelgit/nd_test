@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useAuthUser } from '../hooks/useAuthUser.ts'
+import VInput from './VInput.vue'
+import VButton from './VButton.vue'
 const props = defineProps<{ onSubmit?: Function }>()
 const { authUser } = useAuthUser()
 
@@ -14,9 +16,15 @@ const login = async () => {
 </script>
 
 <template>
-  <form @submit.prevent="login">
-    <input v-model="email" type="email" placeholder="Email" required />
-    <input v-model="password" type="password" placeholder="Password" required />
-    <button type="submit">Login</button>
+  <form @submit.prevent="login" v-bind="$attrs">
+    <VInput v-model="email" type="email" placeholder="Email" required autocomplete="email" />
+    <VInput
+      v-model="password"
+      type="password"
+      placeholder="Password"
+      required
+      autocomplete="current-password"
+    />
+    <VButton type="submit" text="Войти" />
   </form>
 </template>

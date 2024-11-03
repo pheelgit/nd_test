@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useAuthUser } from '../hooks/useAuthUser.ts'
+import VInput from './VInput.vue'
+import VButton from './VButton.vue'
 const props = defineProps<{ onSubmit?: Function }>()
 
 const { regUser } = useAuthUser()
@@ -16,10 +18,23 @@ const register = async () => {
 </script>
 
 <template>
-  <form @submit.prevent="register">
-    <input v-model="email" type="email" placeholder="Email" required />
-    <input v-model="password" type="password" placeholder="Password" required />
-    <input v-model="confirmPassword" type="password" placeholder="Password" required />
-    <button type="submit">Register</button>
+  <form @submit.prevent="register" v-bind="$attrs">
+    <VInput v-model="email" type="email" placeholder="Email" required autocomplete="email" />
+    <VInput
+      v-model="password"
+      type="password"
+      placeholder="Password"
+      required
+      autocomplete="new-password"
+    />
+    <VInput
+      v-model="confirmPassword"
+      type="password"
+      placeholder="Password"
+      required
+      autocomplete="new-password"
+    />
+
+    <VButton type="submit" text="Зарегистрироваться" />
   </form>
 </template>

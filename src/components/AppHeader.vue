@@ -2,30 +2,26 @@
 import AppLogo from './AppLogo.vue'
 import VButton from './VButton.vue'
 import { IconNamesEnum } from '../assets/IconNames.enum.ts'
-import VIcon from './VIcon.vue'
-import { useRoute, useRouter } from 'vue-router'
-const router = useRouter()
+import { useRoute } from 'vue-router'
+import UserActions from './UserActions.vue'
+import { ref } from 'vue'
+import AuthSelector from './AuthSelector.vue'
 const route = useRoute()
-// const iconName = computed(()=>)
-const handleClick = () => {
-  console.log('click')
-  router.push({ query: { auth: 'auth' } })
-}
+const showAuthForms = ref<boolean>(false)
 </script>
 
 <template>
   <div id="app-header">
     <AppLogo />
-    <VIcon :name="IconNamesEnum.login" class="button__icon" />
     <VButton
       v-if="route.name === 'mainPage'"
       text="Вход"
       :icon="IconNamesEnum.login"
-      buttonStyle="normal"
-      textStyle="icon+text"
-      iconStyle="normal"
-      @click="handleClick"
-    />
+      @click="showAuthForms = true"
+    >
+    </VButton>
+    <AuthSelector v-model:is-visible="showAuthForms" />
+    <UserActions v-if="route.name === 'userPage'" />
   </div>
 </template>
 

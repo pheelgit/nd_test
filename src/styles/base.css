@@ -1,13 +1,31 @@
+@import './fonts.css';
+
 body, html{
     margin: 0;
     padding: 0;
     height: 100%;
-  /*background-color: red;*/
+    font-family: 'Montserrat', sans-serif;
+    color: var(--color-white);
 }
 
 #app {
-    width: 100%;
     height: 100%;
     display: flex;
+    padding: 1em 2em;
     flex-direction: column;
+    background: var(--color-dark);
+}
+
+:root{
+--color-dark: #0A1F38;
+--color-dark-middle: #1B2F46;
+--color-dark-lite: #2F4056;
+--color-gray: #9DA5AF;
+--color-green-dark: #819400;
+--color-green-middle: #97AB0D;
+--color-green: #A5BB0C;
+--color-green-light: #B1C909;
+--color-white: #FFFFFF;
+--color-error: #FF7461;
+
 }

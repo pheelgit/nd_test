@@ -12,7 +12,9 @@ export const useAuthUser = () => {
   const getUserData = async () => {
     if (hasToken.value) {
       const { data } = await HTTPService.getUser()
+      await nextTick()
       userStore.updateUserData(data.email, data.id)
+      await nextTick()
     }
   }
 
@@ -24,6 +26,7 @@ export const useAuthUser = () => {
     userStore.updateToken(data.accessToken)
     await nextTick()
     await getUserData()
+    // userStore.updateToken(data.accessToken)
   }
 
   const regUser = async (email: string, password: string, confirm_password: string) => {
@@ -38,7 +41,7 @@ export const useAuthUser = () => {
   }
 
   watch(hasToken, (newVal) => {
-    if (newVal === false) {
+    if (!newVal) {
       userStore.removeUser()
     }
   })

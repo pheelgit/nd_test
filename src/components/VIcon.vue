@@ -17,7 +17,6 @@ const loadIcon = async (iconName: IconNamesEnum) => {
 
 watchEffect(() => {
   loadIcon(props.name)
-  console.log(props.name)
 })
 </script>
 
@@ -27,8 +26,6 @@ watchEffect(() => {
 
 <style scoped>
 svg {
-  width: 1em;
-  height: 1em;
   fill: currentColor;
 }
 </style>

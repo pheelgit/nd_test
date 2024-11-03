@@ -1,19 +1,20 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import VIcon from './VIcon.vue'
-import { IconNamesEnum } from '../assets/IconNames.enum.ts' // Assuming you have an icon component
+import { IconNamesEnum } from '../assets/IconNames.enum.ts'
 
 // Интерфейсы для пропсов
 interface ButtonProps {
   icon?: IconNamesEnum
-  text: string
-  buttonStyle: 'normal' | 'round'
-  textStyle: 'icon+text' | 'round'
-  iconStyle: 'normal' | 'round'
+  text?: string
+  round?: boolean
   disabled?: boolean
 }
 
-// Определяем пропсы
+defineExpose({
+  $attrs: true
+})
+
 const props = defineProps<ButtonProps>()
 
 // Состояния для ховера и нажатия
@@ -49,33 +50,22 @@ const handleMouseUp = () => {
 
 <template>
   <button
-    :class="[
-      'button',
-      `button--${buttonStyle}`,
-      `button--${textStyle}`,
-      `button--${iconStyle}`,
-      {
-        'button--hover': isHovered,
-        'button--pressed': isPressed,
-        'button--disabled': disabled
-      }
-    ]"
+    v-bind="$attrs"
+    class="button"
+    :class="{
+      'button--round': round,
+      'button--hover': isHovered,
+      'button--pressed': isPressed,
+      'button--disabled': disabled
+    }"
     :disabled="disabled"
     @mouseover="handleMouseOver"
     @mouseleave="handleMouseLeave"
     @mousedown="handleMouseDown"
     @mouseup="handleMouseUp"
   >
-    <template v-if="icon && textStyle === 'icon+text'">
-      <VIcon :name="icon" class="button__icon" />
-      <span>{{ text }}</span>
-    </template>
-    <template v-else-if="icon">
-      <VIcon :name="icon" class="button__icon" />
-    </template>
-    <template v-else>
-      <span>{{ text }}</span>
-    </template>
+    <VIcon v-if="icon" :name="icon" class="button__icon" />
+    <span class="text-normal" v-if="!round">{{ text }}</span>
   </button>
 </template>
 
@@ -84,36 +74,38 @@ const handleMouseUp = () => {
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 1em;
   padding: 10px;
   border: none;
   cursor: pointer;
+  border-radius: 5px;
+  background-color: var(--color-green-light);
+
   transition:
     background-color 0.3s,
     box-shadow 0.3s;
-}
-
-.button--normal {
-  border-radius: 5px;
 }
 
 .button--round {
   border-radius: 50%;
 }
 
-.button--icon + text .button__icon {
-  margin-right: 8px;
-}
-
 .button--hover {
-  background-color: #9fcf60; /* Обновите цвет для состояния hover */
+  background-color: var(--color-green-middle);
 }
 
 .button--pressed {
-  background-color: #6bb33b; /* Обновите цвет для состояния pressed */
+  background-color: var(--color-green-dark);
 }
 
 .button--disabled {
-  background-color: #b0b0b0; /* Обновите цвет для состояния disabled */
+  background-color: var(--color-gray);
   cursor: not-allowed;
+}
+
+.button__icon {
+  font-size: 1em;
+  width: 1em;
+  height: 1em;
 }
 </style>

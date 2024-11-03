@@ -1,30 +1,15 @@
 <script setup lang="ts">
-import { onMounted, watch, watchEffect } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { useAuthUser } from '../hooks/useAuthUser.ts'
 
-import PopUp from '../components/PopUp.vue'
-import RegisterForm from '../components/RegisterForm.vue'
-import LogInForm from '../components/LogInForm.vue'
-import { useUserStore } from '../stores/user.ts'
-
-const route = useRoute()
 const router = useRouter()
-const userStore = useUserStore()
 const { getUserData, hasToken } = useAuthUser()
 
 onMounted(async () => {
-  console.log('hasTOken')
   if (hasToken.value) {
-    console.log('if  hasTOken')
     await getUserData()
     await router.push({ name: 'userPage' })
-  }
-})
-
-watch(userStore.state, () => {
-  if (userStore.state.email) {
-    router.push({ name: 'userPage' })
   }
 })
 </script>
@@ -38,12 +23,6 @@ watch(userStore.state, () => {
     <div class="main-image-wrap">
       <img src="../assets/main-img.png" alt="main image" class="main-image" />
     </div>
-    <PopUp title="Регистрация" :is-visible="route.query.auth === 'reg'">
-      <RegisterForm />
-    </PopUp>
-    <PopUp title="Вход в ваш аккаунт" :is-visible="route.query.auth === 'auth'">
-      <LogInForm />
-    </PopUp>
   </div>
 </template>
 
