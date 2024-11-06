@@ -1,15 +1,14 @@
 import { useUserStore } from '../stores/user.ts'
 import { computed, nextTick, watch } from 'vue'
 import HTTPService from '../services/HTTPService.ts'
-import { useRouter } from 'vue-router'
 
 export const useAuthUser = () => {
   const userStore = useUserStore()
-  const router = useRouter()
 
   const hasToken = computed(() => Boolean(userStore.token))
 
   const getUserData = async () => {
+    await nextTick()
     if (hasToken.value) {
       const { data } = await HTTPService.getUser()
       await nextTick()
@@ -26,7 +25,7 @@ export const useAuthUser = () => {
     userStore.updateToken(data.accessToken)
     await nextTick()
     await getUserData()
-    // userStore.updateToken(data.accessToken)
+    await nextTick()
   }
 
   const regUser = async (email: string, password: string, confirm_password: string) => {
@@ -37,7 +36,7 @@ export const useAuthUser = () => {
     })
     userStore.updateUserData(email, signInData.id)
 
-    await router.push({ name: 'userPage' })
+    await authUser(email, password)
   }
 
   watch(hasToken, (newVal) => {

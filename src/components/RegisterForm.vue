@@ -13,6 +13,7 @@ const confirmPassword = ref('')
 
 const register = async () => {
   await regUser(email.value, password.value, confirmPassword.value)
+
   props.onSubmit && props.onSubmit()
 }
 </script>
