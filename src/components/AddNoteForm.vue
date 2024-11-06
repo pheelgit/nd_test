@@ -30,7 +30,6 @@ const register = async () => {
       placeholder="Введите значение"
       errorMessage="Сообщение об ошибке"
     ></VInput>
-    <VButton type="submit" />
-    <button type="submit">Добавить</button>
+    <VButton type="submit" text="Добавить" />
   </form>
 </template>
